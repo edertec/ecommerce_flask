@@ -1,13 +1,19 @@
-class Product:
-    all_products = []  # Define all_products as a class attribute
+from app import db
 
-    def __init__(self, id, name, price, category_id, description, images):
-        self.id = id
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    description = db.Column(db.String(200), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    images = db.Column(db.PickleType, nullable=True)  # This assumes you're storing a list of image filenames
+
+    def __init__(self, name, price, description, category_id, images=None):
         self.name = name
         self.price = price
-        self.category_id = category_id
         self.description = description
-        self.images = images  # List of image URLs
+        self.category_id = category_id
+        self.images = images or []
 
-        # Add this product instance to the class-wide list of all products
-        Product.all_products.append(self)
+    def __repr__(self):
+        return f'<Product {self.name}>'
